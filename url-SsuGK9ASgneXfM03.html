@@ -1,1 +1,397 @@
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta http-equiv="Content-Style-Type" content="text/css" /><meta name="generator" content="Aspose.Words for .NET 17.1.0.0" /><title></title></head><body><div><p style="margin-top:0pt; margin-bottom:0pt; font-size:12pt"><span style="font-family:'Times New Roman'">&#xa0;</span></p></div></body></html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>単語暗記アプリ</title>
+  <style>
+    body {font-family: Arial, sans-serif; background-color: #f1f1f1; text-align: center; padding: 50px;}
+    #card {background-color: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); padding: 30px; max-width: 400px; margin: auto;}
+    button {margin: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; background: #4a90e2; color: #fff; transition: background 0.2s;}
+    button:hover {background: #357ab8;}
+    #meaning {display: none; margin-top: 20px; font-weight: bold; color: #333; font-size: 1.3em;}
+    #word {font-size: 2em; margin: 30px 0 10px 0; font-weight: bold; letter-spacing: 2px; color: #222;}
+    #input-area {margin-top: 35px; text-align: left; max-width: 400px; margin-left: auto; margin-right: auto;}
+    #input-area input, #input-area button {margin-top: 8px; font-size: 1em;}
+    #input-area input {width: 90%; padding: 6px; margin-bottom: 6px; border-radius: 4px; border: 1px solid #ccc; display: block;}
+    #input-area button {width: 100%; padding: 8px 0; font-size: 1em; margin: 0;}
+    .meaning-label {font-size: 0.95em; margin-top: 4px; margin-bottom: 0; color: #333;}
+    #shuffleBtn {background: #f5a623; margin-bottom: 8px;}
+    #shuffleBtn:hover {background: #d48806;}
+    #exportBtn {background: #26ba6a;}
+    #exportBtn:hover {background: #17883e;}
+    #importBtn {background: #a641ec;}
+    #importBtn:hover {background: #7031a8;}
+    #shareBtn {background: #f57e42;}
+    #shareBtn:hover {background: #c26e25;}
+    #word-table-area {margin-top: 40px; max-width: 900px; margin-left: auto; margin-right: auto; text-align: left;}
+    table {width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #eee; overflow: hidden;}
+    th, td {border-bottom: 1px solid #ddd; padding: 8px 6px; text-align: left;}
+    th {background: #e4eaf7;}
+    tr:last-child td {border-bottom: none;}
+    .table-btn {background: #f56a4a; color: #fff; padding: 6px 10px; margin: 0 3px; border: none; border-radius: 4px; font-size: 0.95em; cursor: pointer; transition: background 0.2s;}
+    .table-btn:hover {background: #c23b1a;}
+    .edit-btn {background: #4aa04a;}
+    .edit-btn:hover {background: #236723;}
+    .save-btn {background: #4a90e2;}
+    .save-btn:hover {background: #357ab8;}
+    .cancel-btn {background: #888;}
+    .cancel-btn:hover {background: #555;}
+    .edit-input {width: 90%; padding: 4px; margin-bottom: 2px; border-radius: 3px; border: 1px solid #bbb; font-size: 0.95em;}
+    #exportArea {width: 90%; margin: 10px auto 0 auto; display: none; background: #eee; border-radius: 6px; padding: 12px; font-size: 0.95em; word-break: break-all; white-space: pre-wrap;}
+    #shareUrlArea {width: 90%; margin: 10px auto 0 auto; display: none; background: #ffe8d9; border-radius: 6px; padding: 12px; font-size: 0.95em; word-break: break-all; white-space: pre-wrap; color: #b05619; border: 1px solid #f8cba4;}
+  </style>
+</head>
+<body>
+
+  <h1>単語暗記アプリ</h1>
+  <div id="card">
+    <div id="word">単語がありません</div>
+    <div id="meaning"></div>
+    <button onclick="showMeaning()">答えを見る</button>
+    <button onclick="nextWord()">次へ</button>
+    <button id="shuffleBtn" onclick="shuffleCards()">シャッフル</button>
+    <button id="exportBtn" onclick="exportWords()">エクスポート</button>
+    <button id="importBtn" onclick="importWords()">インポート</button>
+    <button id="shareBtn" onclick="shareWords()">共有用URL作成</button>
+    <div id="exportArea"></div>
+    <div id="shareUrlArea"></div>
+  </div>
+
+  <div id="input-area">
+    <h3>単語追加</h3>
+    <input type="text" id="newWord" placeholder="単語 (例: dog)">
+    <label class="meaning-label" for="newMeaning1">意味1（必須）</label>
+    <input type="text" id="newMeaning1" placeholder="意味1 (例: 犬)">
+    <label class="meaning-label" for="newMeaning2">意味2（任意）</label>
+    <input type="text" id="newMeaning2" placeholder="意味2">
+    <label class="meaning-label" for="newMeaning3">意味3（任意）</label>
+    <input type="text" id="newMeaning3" placeholder="意味3">
+    <label class="meaning-label" for="newMeaning4">意味4（任意）</label>
+    <input type="text" id="newMeaning4" placeholder="意味4">
+    <label class="meaning-label" for="newMeaning5">意味5（任意）</label>
+    <input type="text" id="newMeaning5" placeholder="意味5">
+    <label class="meaning-label" for="newMeaning6">意味6（任意）</label>
+    <input type="text" id="newMeaning6" placeholder="意味6">
+    <label class="meaning-label" for="newMeaning7">意味7（任意）</label>
+    <input type="text" id="newMeaning7" placeholder="意味7">
+    <label class="meaning-label" for="newMeaning8">意味8（任意）</label>
+    <input type="text" id="newMeaning8" placeholder="意味8">
+    <label class="meaning-label" for="newMeaning9">意味9（任意）</label>
+    <input type="text" id="newMeaning9" placeholder="意味9">
+    <label class="meaning-label" for="newMeaning10">意味10（任意）</label>
+    <input type="text" id="newMeaning10" placeholder="意味10">
+    <button onclick="addWord()">追加</button>
+  </div>
+
+  <div id="word-table-area">
+    <h3>単語一覧表</h3>
+    <div style="overflow-x: auto;">
+      <table id="wordTable">
+        <thead>
+          <tr>
+            <th style="width:8%;">単語</th>
+            <th style="width:8%;">意味1</th>
+            <th style="width:8%;">意味2</th>
+            <th style="width:8%;">意味3</th>
+            <th style="width:8%;">意味4</th>
+            <th style="width:8%;">意味5</th>
+            <th style="width:8%;">意味6</th>
+            <th style="width:8%;">意味7</th>
+            <th style="width:8%;">意味8</th>
+            <th style="width:8%;">意味9</th>
+            <th style="width:8%;">意味10</th>
+            <th style="width:12%;">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // 共有URLで開いた場合もlocalStorageへ上書き保存し、URLから?data=...を消す
+    function loadWordsFromAnywhere() {
+      const params = new URLSearchParams(window.location.search);
+      const data = params.get('data');
+      if (data) {
+        try {
+          const shared = decodeSharedWords(data);
+          // localStorageへ必ず上書き保存
+          localStorage.setItem('words', JSON.stringify(shared));
+          // URLから?data=...を消す（履歴は残るがリロード時はlocalStorage利用へ）
+          params.delete('data');
+          const newUrl = location.pathname + (params.toString() ? '?' + params.toString() : '');
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState({}, '', newUrl);
+          }
+          return shared;
+        } catch {
+          return [];
+        }
+      }
+      const saved = localStorage.getItem('words');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          return [];
+        }
+      }
+      return [];
+    }
+
+    function saveWords(words) {
+      localStorage.setItem('words', JSON.stringify(words));
+    }
+
+    function encodeSharedWords(words) {
+      const text = words.map(w => [w.word, ...(w.meanings || [])].join(',')).join(';');
+      return encodeURIComponent(text);
+    }
+    function decodeSharedWords(dataStr) {
+      const text = decodeURIComponent(dataStr);
+      return text.split(';').map(line => {
+        const parts = line.split(',');
+        return { word: parts[0], meanings: parts.slice(1) };
+      });
+    }
+
+    function shareWords() {
+      if (!words.length) {
+        alert("単語リストが空です");
+        return;
+      }
+      const params = new URLSearchParams();
+      params.set('data', encodeSharedWords(words));
+      const url = location.origin + location.pathname + '?' + params.toString();
+      const area = document.getElementById('shareUrlArea');
+      area.style.display = 'block';
+      area.textContent = url;
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      window.prompt('このURLをコピーして共有できます', url);
+    }
+
+    let words = loadWordsFromAnywhere();
+    let currentIndex = 0;
+    let editRowIndex = null;
+
+    function showWord() {
+      if (words.length === 0) {
+        document.getElementById("word").textContent = "単語がありません";
+        document.getElementById("meaning").style.display = "none";
+        return;
+      }
+      document.getElementById("word").textContent = words[currentIndex].word;
+      document.getElementById("meaning").style.display = "none";
+    }
+
+    function showMeaning() {
+      if (words.length === 0) return;
+      const meanings = words[currentIndex].meanings || [];
+      if (meanings.length === 0) return;
+      document.getElementById("meaning").innerHTML =
+        meanings.map((m, i) => `<div>${i + 1}. ${m}</div>`).join('');
+      document.getElementById("meaning").style.display = "block";
+    }
+
+    function nextWord() {
+      if (words.length === 0) return;
+      currentIndex = (currentIndex + 1) % words.length;
+      showWord();
+    }
+
+    function addWord() {
+      const newWord = document.getElementById('newWord').value.trim();
+      const meanings = [];
+      for (let i = 1; i <= 10; i++) {
+        const val = document.getElementById('newMeaning' + i).value.trim();
+        if (val) meanings.push(val);
+      }
+      if (!newWord || meanings.length === 0) {
+        alert("単語と意味1を入力してください");
+        return;
+      }
+      words.push({ word: newWord, meanings });
+      saveWords(words);
+      document.getElementById('newWord').value = '';
+      for (let i = 1; i <= 10; i++) {
+        document.getElementById('newMeaning' + i).value = '';
+      }
+      currentIndex = words.length - 1;
+      showWord();
+      renderTable();
+    }
+
+    function shuffleCards() {
+      if (words.length < 2) return;
+      for (let i = words.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [words[i], words[j]] = [words[j], words[i]];
+      }
+      saveWords(words);
+      currentIndex = 0;
+      showWord();
+      renderTable();
+    }
+
+    function renderTable() {
+      const tbody = document.querySelector('#wordTable tbody');
+      tbody.innerHTML = '';
+      words.forEach((item, idx) => {
+        if (editRowIndex === idx) {
+          let editInputs = '';
+          for (let i = 0; i < 10; i++) {
+            editInputs += `<td><input class="edit-input" id="editMeaning${i+1}" value="${item.meanings[i] ? item.meanings[i] : ''}"></td>`;
+          }
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><input class="edit-input" id="editWord" value="${item.word}"></td>
+            ${editInputs}
+            <td>
+              <button class="table-btn save-btn" onclick="saveEdit(${idx})">保存</button>
+              <button class="table-btn cancel-btn" onclick="cancelEdit()">キャンセル</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        } else {
+          let meaningsCells = '';
+          for (let i = 0; i < 10; i++) {
+            meaningsCells += `<td>${item.meanings[i] ? item.meanings[i] : ''}</td>`;
+          }
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${item.word}</td>
+            ${meaningsCells}
+            <td>
+              <button class="table-btn edit-btn" onclick="editRow(${idx})">編集</button>
+              <button class="table-btn" onclick="deleteWord(${idx})">削除</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+    }
+
+    function deleteWord(idx) {
+      if (!confirm('この単語を削除しますか？')) return;
+      words.splice(idx, 1);
+      saveWords(words);
+      if (currentIndex >= words.length) currentIndex = Math.max(words.length - 1, 0);
+      showWord();
+      renderTable();
+    }
+
+    function editRow(idx) {
+      editRowIndex = idx;
+      renderTable();
+    }
+
+    function saveEdit(idx) {
+      const newWord = document.getElementById('editWord').value.trim();
+      const newMeanings = [];
+      for (let i = 1; i <= 10; i++) {
+        const val = document.getElementById('editMeaning' + i).value.trim();
+        if (val) newMeanings.push(val);
+      }
+      if (!newWord || newMeanings.length === 0) {
+        alert('単語と意味1は必須です');
+        return;
+      }
+      words[idx] = { word: newWord, meanings: newMeanings };
+      saveWords(words);
+      editRowIndex = null;
+      showWord();
+      renderTable();
+    }
+
+    function cancelEdit() {
+      editRowIndex = null;
+      renderTable();
+    }
+
+    function exportWords() {
+      let text = '';
+      words.forEach(item => {
+        let line = item.word;
+        if (item.meanings && item.meanings.length > 0) {
+          line += ',' + item.meanings.join(',');
+        }
+        text += line + '\n';
+      });
+      document.getElementById('exportArea').style.display = 'block';
+      document.getElementById('exportArea').textContent = text.trim();
+      setTimeout(() => {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }, 100);
+    }
+
+    function importWords() {
+      const input = window.prompt(
+        "単語リストを貼り付けてください（1行ごとに単語,意味1,意味2... とカンマ区切り）\n例:\napple,りんご,果物\ndog,犬,ペット\n\n※単語の切り替えに「/」を使う場合は「apple,りんご,果物/ dog,犬,ペット」のように1行でOKです。"
+      );
+      if (input) {
+        try {
+          let allLines = [];
+          input.replace(/\r\n?/g, '\n')
+            .split('\n')
+            .forEach(line => {
+              line.split('/').forEach(sub => {
+                if (sub.trim()) allLines.push(sub.trim());
+              });
+            });
+
+          const imported = [];
+          for (const line of allLines) {
+            if (!line.trim()) continue;
+            const parts = line.split(',');
+            const word = (parts[0] || '').trim();
+            const meanings = parts.slice(1).map(x => x.trim()).filter(x => x);
+            if (!word || !meanings[0]) continue;
+            imported.push({ word, meanings });
+          }
+          if (imported.length === 0) throw new Error();
+          words = imported;
+          saveWords(words);
+          currentIndex = 0;
+          showWord();
+          renderTable();
+          alert("インポートが完了しました");
+        } catch (e) {
+          alert(
+            "インポートに失敗しました。正しい形式か確認してください。\n例：\napple,りんご,果物\ndog,犬,ペット\nまたは apple,りんご,果物/ dog,犬,ペット"
+          );
+        }
+      }
+    }
+
+    function setupSlashShortcut() {
+      const inputIds = ['newWord'];
+      for (let i = 1; i <= 10; i++) {
+        inputIds.push('newMeaning' + i);
+      }
+      inputIds.forEach(id => {
+        const el = document.getElementById(id);
+        el.addEventListener('keydown', function(e) {
+          if (e.key === '/' && el.value.endsWith('/')) {
+            e.preventDefault();
+            el.value = el.value.slice(0, -1);
+            addWord();
+            document.getElementById('newWord').focus();
+          }
+        });
+      });
+    }
+
+    window.deleteWord = deleteWord;
+    window.editRow = editRow;
+    window.saveEdit = saveEdit;
+    window.cancelEdit = cancelEdit;
+
+    showWord();
+    renderTable();
+    window.onload = setupSlashShortcut;
+  </script>
+
+</body>
+</html>
